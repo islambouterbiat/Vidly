@@ -1,4 +1,5 @@
-import React, { Component } from "react";
+import React from "react";
+import * as authService from "../../services/authService";
 import Joi from "joi-browser";
 import Form from "./form";
 
@@ -13,16 +14,26 @@ class LoginForm extends Form {
     password: Joi.string().required().min(6).label("Password"),
   };
 
-  doSubmit = () => {
-    //call the server
-    console.log("submitted");
+  doSubmit = async () => {
+    try {
+      const { username, password } = this.state.data;
+      const { data: jwt } = await authService.login(username, password);
+      localStorage.setItem("token", jwt);
+      this.props.history.push("/");
+    } catch (ex) {
+      if (ex.response && ex.response.status === 400) {
+        const errors = { ...this.state.errors };
+        errors.username = ex.response.data;
+        this.setState({ errors });
+      }
+    }
   };
 
   render() {
     return (
       <div>
         <h1>Login</h1>
-        <form onSubmit={this.handleLoginSubmit}>
+        <form onSubmit={this.handleSubmit}>
           {this.renderInput("username", "Username")}
           {this.renderInput("password", "Password", "password")}
           {this.renderButton("Login")}
