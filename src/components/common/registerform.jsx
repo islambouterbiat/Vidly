@@ -1,5 +1,6 @@
 import React from "react";
 import * as userService from "../../services/userService";
+import { Redirect } from "react-router-dom";
 import Joi from "joi-browser";
 import Form from "./form";
 import auth from "../../services/authService";
@@ -30,6 +31,7 @@ class RegisterForm extends Form {
     }
   };
   render() {
+    if (auth.getCurrentUser()) return <Redirect to="/" />;
     return (
       <div>
         <h1>Register</h1>
