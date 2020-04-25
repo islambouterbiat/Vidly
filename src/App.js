@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Route, Redirect, Switch } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import jwtDecode from "jwt-decode";
 import Counters from "./components/counters";
 import Movies from "./components/movies";
 import Rentals from "./components/rentals";
@@ -48,11 +49,21 @@ class App extends Component {
   //   });
   //   this.setState({ counters });
   // };
+  state = {};
+
+  componentDidMount() {
+    try {
+      const jwt = localStorage.getItem("token");
+      const user = jwtDecode(jwt);
+      this.setState({ user });
+    } catch (ex) {}
+  }
+
   render() {
     return (
       <React.Fragment>
         <ToastContainer />
-        <NavBar />
+        <NavBar user={this.state.user} />
         <main className="container">
           <Switch>
             <Route path="/movies/:id" component={MovieForm}></Route>
